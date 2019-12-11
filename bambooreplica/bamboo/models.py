@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 # Create your models here.
 
 class Profile(models.Model):
@@ -16,6 +16,7 @@ class Profile(models.Model):
     dob = models.DateField()
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     marital_status = models.CharField(max_length=1, choices=MARITAL_CHOICES)
+    owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     country = models.CharField(max_length=100)
     profile_photo = models.ImageField(upload_to='images/')
     live = models.CharField(max_length=200)
