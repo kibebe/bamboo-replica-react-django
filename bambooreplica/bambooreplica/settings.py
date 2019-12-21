@@ -40,7 +40,14 @@ INSTALLED_APPS = [
     'bamboo.apps.BambooConfig',
     'rest_framework',
     'frontend.apps.FrontendConfig',
+    'knox',
+    'accounts.apps.AccountsConfig'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': 
+    ('knox.auth.TokenAuthentication',)
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

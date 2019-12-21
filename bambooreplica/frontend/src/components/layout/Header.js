@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -23,9 +24,35 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function NavBar() {
+export default function NavBar({auth: { isAuthenticated }, logout}) {
   const classes = useStyles();
-
+  const authLinks = (
+    <Button 
+      color="inherit" 
+      className={classes.loginButton}
+      onClick={() => logout()}
+    >
+      Logout
+    </Button>
+  )
+  const guestLinks = (
+    <>
+      <Button 
+        color="inherit" 
+        className={classes.loginButton}
+        component={React.forwardRef((props, ref) => <Link to="/login" {...props} ref={ref} />)}
+      >
+        Login
+      </Button>
+      <Button 
+        color="inherit" 
+        variant="outlined"
+        component={React.forwardRef((props, ref) => <Link to="/register" {...props} ref={ref} />)}
+      >
+        Register
+      </Button>
+    </>
+  )
   return (
     <div className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
@@ -33,8 +60,7 @@ export default function NavBar() {
           <Typography variant="h6" className={classes.title}>
             Bamboo Replica
           </Typography>
-          <Button color="inherit" className={classes.loginButton}>Login</Button>
-          <Button color="inherit" variant="outlined">Register</Button>
+          {isAuthenticated ? authLinks : guestLinks}
         </Toolbar>
       </AppBar>
     </div>

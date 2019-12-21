@@ -13,6 +13,8 @@ import FormControl from '@material-ui/core/FormControl';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
+import Body from './Body'
+import { Redirect } from 'react-router-dom'
 
 const styles = theme => ({
   container: {
@@ -37,6 +39,7 @@ const styles = theme => ({
     margin: theme.spacing(1),
     width: '70%',
     marginBottom: theme.spacing(4),
+    marginLeft: '15%'
   },
   textField: {
     width: '70%',
@@ -45,20 +48,20 @@ const styles = theme => ({
     marginBottom: theme.spacing(4)
   },
   buttonLogin: {
-    marginLeft: theme.spacing(4)
+    marginLeft: '15%',
   }
 });
 
 class LoginForm extends Component{
     state = {
-        email: '',
+        username: '',
         password: '',
         showPassword: false
     }
 
-    handleClickShowPassword = ({showPassword}) => {
+    handleClickShowPassword = () => {
         this.setState({
-            showPassword: !showPassword
+            showPassword: !this.state.showPassword
         })
     };
 
@@ -72,20 +75,31 @@ class LoginForm extends Component{
         })
     }
 
+    handleSubmit = (username, password) => {
+      this.props.login(username, password)
+    }
+
     render(){
-        const { classes } = this.props
-        const { showPassword, password, email } = this.state
+        const { classes, auth: {isAuthenticated} } = this.props
+        const { showPassword, password, username } = this.state
+
+        if(isAuthenticated){
+          return <Redirect to='/' />
+        }
+
         return(
+          <>
+            <Body />
             <div className={classes.container}>
                 <div className={classes.formHeader}>
                     Welcome Back, Login to Continue
                 </div>
                 <TextField
-                    name="email"
+                    name="username"
                     onChange={this.handleChange}
-                    value={email}
+                    value={username}
                     className={classes.margin}
-                    label="Email"
+                    label="Username"
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -121,11 +135,17 @@ class LoginForm extends Component{
                   />
                 </FormControl>
                 <div className={classes.buttonContainer}>
-                    <Button variant="contained" color="primary" className={classes.buttonLogin}>
-                        Login
+                    <Button 
+                      variant="contained" 
+                      color="primary" 
+                      className={classes.buttonLogin}
+                      onClick={() => this.handleSubmit(username, password)}
+                    >
+                      Login
                     </Button>
                 </div>
             </div>
+          </>
         )
     }
 }

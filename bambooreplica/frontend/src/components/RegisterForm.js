@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography'
+import Button from '@material-ui/core/Button'
 import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
 import EmailIcon from '@material-ui/icons/Email';
@@ -12,6 +13,8 @@ import FormControl from '@material-ui/core/FormControl';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
+import Body from './Body'
+import { Redirect } from 'react-router-dom'
 
 const styles = theme => ({
   container: {
@@ -35,23 +38,32 @@ const styles = theme => ({
   margin: {
     margin: theme.spacing(1),
     width: '70%',
+    marginBottom: theme.spacing(4),
+    marginLeft: '15%',
   },
   textField: {
     width: '70%',
+  },
+  buttonContainer: {
+    marginBottom: theme.spacing(4)
+  },
+  buttonLogin: {
+    marginLeft: '15%',
   }
 });
 
 class LoginForm extends Component{
     state = {
+        username: '',
         email: '',
         password: '',
         password2: '',
         showPassword: false
     }
 
-    handleClickShowPassword = ({showPassword}) => {
+    handleClickShowPassword = () => {
         this.setState({
-            showPassword: !showPassword
+            showPassword: !this.state.showPassword
         })
     };
 
@@ -65,14 +77,43 @@ class LoginForm extends Component{
         })
     }
 
+    handleSubmit = (username, email, password, password2) => {
+      if(password !== password2){
+        alert("Password dont match!")
+        return
+      }
+      this.props.register(username, email, password)
+    }
+
     render(){
-        const { classes } = this.props
-        const { showPassword, password, password2, email } = this.state
+        const { classes, auth: {isAuthenticated} } = this.props
+        const { showPassword, password, password2, email, username } = this.state
+
+        if(isAuthenticated){
+          return <Redirect to='/' />
+        }
+
         return(
+          <>
+            <Body />
             <div className={classes.container}>
                 <div className={classes.formHeader}>
-                    Welcome Back, Login to Continue
+                    Welcome Back, Register to Continue
                 </div>
+                <TextField
+                    name="username"
+                    onChange={this.handleChange}
+                    value={username}
+                    className={classes.margin}
+                    label="Username"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <EmailIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                />
                 <TextField
                     name="email"
                     onChange={this.handleChange}
@@ -139,7 +180,18 @@ class LoginForm extends Component{
                     }
                   />
                 </FormControl>
+                <div className={classes.buttonContainer}>
+                    <Button 
+                      variant="contained" 
+                      color="primary" 
+                      className={classes.buttonLogin}
+                      onClick={() => this.handleSubmit(username, email, password, password2)}
+                    >
+                      Register
+                    </Button>
+                </div>
             </div>
+          </>
         )
     }
 }
